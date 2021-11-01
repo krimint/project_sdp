@@ -38,7 +38,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
 
-    Route::get('/tes',[AuthController::class,'tes']);
+    // Route::get('/tes',[AuthController::class,'tes']);
+    Route::post('/storeakhir',[App\Http\Controllers\ShiftController::class,'update']);
     Route::get('/logout',[AuthController::class,'logout']);
 
 });

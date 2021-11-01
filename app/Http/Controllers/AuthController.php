@@ -44,12 +44,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+        $cek = Shift::latest()->where('user_id',auth()->user()->id)->first();
+        if(Auth::user()->role == 'User'){
+            if(empty($cek->cash_akhir)){
+                return view('shift.cashakhir',compact('cek'));
+            }
+        }
+        else{
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect('/');
+        }
     }
 }
