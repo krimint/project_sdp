@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\PaketController;
+// use App\Http\Controllers\MenuController;
+// use App\Http\Controllers\PaketController;
 use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +26,17 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['admin']], function () {
 
-        Route::get('/transaksi', function () {
-            return 'trx';
-        });
+        // Route::get('/transaksi', function () {
+        //     return 'trx';
+        // });
     });
 
-    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])
-        ->name('dashboard');
+    //buat shift
+    Route::get('/cashawal',[App\Http\Controllers\ShiftController::class,'cashawal']);
+    Route::post('/storecash',[App\Http\Controllers\ShiftController::class,'inputCash']);
+    //
+
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
 
     Route::get('/tes',[AuthController::class,'tes']);
     Route::get('/logout',[AuthController::class,'logout']);

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Shift;
 
 class AuthController extends Controller
 {
@@ -22,18 +24,23 @@ class AuthController extends Controller
         if(Auth::attempt($credentials)){
             $request->session()->regenerate();
             // cek ke data sblmnya shift
-           
-
+            $cek = Shift::latest()->where('user_id',auth()->user()->id)
+                    ->whereDate('waktu_awal',date('Y-m-d'))
+                    ->first();
+            if(is_null($cek)){
+                return redirect()->intended('cashawal');
+            }
+            /////
             return redirect()->intended('dashboard');
         }
 
         return back()->with('loginErr','Login gagal!');
     }
 
-    public function tes(){
-        $user = User::find(Auth::user()->id);
-        return $user->shift;
-    }
+    // public function tes(){
+    //     $user = User::find(Auth::user()->id);
+    //     return $user->shift;
+    // }
 
     public function logout(Request $request)
     {
