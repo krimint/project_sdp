@@ -27,8 +27,10 @@ class AuthController extends Controller
             $cek = Shift::latest()->where('user_id',auth()->user()->id)
                     ->whereDate('waktu_awal',date('Y-m-d'))
                     ->first();
-            if(is_null($cek)){
-                return redirect()->intended('cashawal');
+            if(Auth::user()->role == 'User'){
+                if(is_null($cek)){
+                    return redirect()->intended('cashawal');
+                }
             }
             /////
             return redirect()->intended('dashboard');
