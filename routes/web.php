@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\MenuController;
-// use App\Http\Controllers\PaketController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PaketController;
 use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +25,12 @@ Route::post('/auth',[AuthController::class,'authenticate']);
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['admin']], function () {
+
+        Route::resource('menu',MenuController::class);
+        Route::resource('paket',PaketController::class);
+        Route::resource('meja', App\Http\Controllers\MejaController::class);
+        Route::resource('menupaket',App\Http\Controllers\MenuPaketController::class);
+
 
         // Route::get('/transaksi', function () {
         //     return 'trx';
