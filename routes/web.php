@@ -26,7 +26,7 @@ Route::post('/auth',[AuthController::class,'authenticate']);
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::group(['middleware' => ['admin']], function () {
+    Route::group(['middleware' => ['admin','cekshift']], function () {
 
         Route::resource('menu',MenuController::class);
         Route::resource('paket',PaketController::class);
@@ -40,14 +40,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     //buat shift
-    Route::get('/cashawal',[App\Http\Controllers\ShiftController::class,'cashawal']);
+    Route::get('/cashawal',[App\Http\Controllers\ShiftController::class,'cashawal'])->name('cashawal');
     Route::post('/storecash',[App\Http\Controllers\ShiftController::class,'inputCash']);
     //
-
-    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
-
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard')->middleware('cekshift');
     // Route::get('/tes',[AuthController::class,'tes']);
-    Route::post('/storeakhir',[App\Http\Controllers\ShiftController::class,'update']);
-    Route::get('/logout',[AuthController::class,'logout']);
+    Route::post('/storeakhir',[App\Http\Controllers\ShiftController::class,'update'])->middleware('cekshift');
+    Route::get('/logout',[AuthController::class,'logout'])->middleware('cekshift');
 
 });
