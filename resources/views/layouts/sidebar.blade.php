@@ -18,7 +18,7 @@
         </ul>
     </nav>
 <!-- /.navbar -->
-    
+
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
@@ -71,6 +71,12 @@
                             <p>Meja</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('posts.index') }}" class="nav-link">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Pengguna</p>
+                        </a>
+                    </li>
                     <li class="nav-item mt-5">
                         <a href="/logout" class="nav-link">
                             <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -84,7 +90,7 @@
                             <p>Transaksi</p>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item mt-5">
                         <a href="/logout" class="nav-link">
                             <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -92,7 +98,7 @@
                         </a>
                     </li>
                     @endif
-                </ul>    
+                </ul>
             </nav>
         </div>
     </aside>
