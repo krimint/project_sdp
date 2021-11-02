@@ -25,7 +25,13 @@ class TrxController extends Controller
 
     public function store(Request $request){
 
-        $total_payment = Menu::whereIn('id',$request->menu)->sum('harga');
+        $total_payment = 0;
+
+        for ($i=0; $i < count($request->menu); $i++) {
+            $price = Menu::where('id',$request->menu[$i])->first();
+            $total_payment = $total_payment + ($price->harga * $request->qty[$i]);
+
+        }
 
         $trx = Trx::create([
             'user_id' => auth()->user()->id,
@@ -45,6 +51,8 @@ class TrxController extends Controller
                 'jenis_payment' => '',
             ]);
         }
+
+        Meja::where('id',$request->meja[0])->update(['status' =>0]);
 
         return redirect('trx')->with('success', 'Transaksi berhasil ditambahkan');
 
