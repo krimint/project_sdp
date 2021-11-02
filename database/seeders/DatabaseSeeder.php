@@ -38,23 +38,23 @@ class DatabaseSeeder extends Seeder
         \DB::table('mejas')->insert([
             [
                 'nama' => 'Meja 1',
-                'status' => 0
+                'status' => 1
             ],
             [
                 'nama' => 'Meja 2',
-                'status' => 0
+                'status' => 1
             ],
             [
                 'nama' => 'Meja 3',
-                'status' => 0
+                'status' => 1
             ],
             [
                 'nama' => 'Meja 4',
-                'status' => 0
+                'status' => 1
             ],
             [
                 'nama' => 'Meja 5',
-                'status' => 0
+                'status' => 1
             ],
 
         ]);

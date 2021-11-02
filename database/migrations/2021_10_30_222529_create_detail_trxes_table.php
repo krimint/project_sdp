@@ -17,6 +17,7 @@ class CreateDetailTrxesTable extends Migration
             $table->id();
             $table->foreignId('trx_id')->constrained('trxes')->onDelete('cascade');
             $table->string('jenis');
+            $table->string('id_jenis');
             $table->integer('qty');
             $table->boolean('status_payment');
             $table->string('jenis_payment');

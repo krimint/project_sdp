@@ -34,17 +34,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('menupaket',App\Http\Controllers\MenuPaketController::class);
         Route::resource('posts', UserController::class);
 
-        // Route::get('/transaksi', function () {
-        //     return 'trx';
-        // });
     });
 
     //buat shift
     Route::get('/cashawal',[App\Http\Controllers\ShiftController::class,'cashawal'])->name('cashawal');
     Route::post('/storecash',[App\Http\Controllers\ShiftController::class,'inputCash']);
-    //
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('dashboard')->middleware('cekshift');
-    // Route::get('/tes',[AuthController::class,'tes']);
+
+    Route::get('/trx',[App\Http\Controllers\TrxController::class,'index'])->middleware('cekshift');
+    Route::get('/getPaket',[App\Http\Controllers\TrxController::class,'getPaket'])->middleware('cekshift');
+    Route::post('/trx/store',[App\Http\Controllers\TrxController::class,'store'])->middleware('cekshift');
+
     Route::post('/storeakhir',[App\Http\Controllers\ShiftController::class,'update'])->middleware('cekshift');
     Route::get('/logout',[AuthController::class,'logout'])->middleware('cekshift');
 
