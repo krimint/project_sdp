@@ -52,11 +52,11 @@ class AuthController extends Controller
                 return view('shift.cashakhir',compact('cek'));
             }
         }
-        else{
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return redirect('/');
-        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
+
     }
 }
