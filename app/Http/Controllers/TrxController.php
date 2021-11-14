@@ -12,7 +12,9 @@ use Illuminate\Http\Request;
 class TrxController extends Controller
 {
     public function index(){
-        $transaksi = Trx::with('detailTrx')->get();
+        $transaksi = Trx::join('mejas','mejas.id','=','trxes.meja_id')
+        ->get(['mejas.nama as nama_meja','trxes.status','trxes.total_payment']);
+        // return $transaksi;
         $meja = Meja::where('status','1')->get();
         $menu = Menu::where('status','1')->get();
         return view('trx.index',compact(['transaksi','meja','menu']));
@@ -30,7 +32,6 @@ class TrxController extends Controller
         for ($i=0; $i < count($request->menu); $i++) {
             $price = Menu::where('id',$request->menu[$i])->first();
             $total_payment = $total_payment + ($price->harga * $request->qty[$i]);
-
         }
 
         $trx = Trx::create([
@@ -56,5 +57,11 @@ class TrxController extends Controller
 
         return redirect('trx')->with('success', 'Transaksi berhasil ditambahkan');
 
+    }
+
+    public function report(){
+        $report = DetailTrx::with('trx')->get();
+        // return $report;
+        return view('trx.report',compact('report'));
     }
 }
