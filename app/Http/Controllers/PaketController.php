@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Paket;
-
+use App\Models\Menu;
+use App\Models\MenuPaket;
+use Illuminate\Database\Eloquent\Builder;
 class PaketController extends Controller
 {
     public function index()
@@ -20,7 +22,7 @@ class PaketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string',
+            'nama' => 'required|string|unique:pakets',
             'status' => 'required',
             'harga' => 'required|numeric'
         ]);
@@ -36,7 +38,7 @@ class PaketController extends Controller
 
     public function update(Request $request, Paket $paket){
         $request->validate([
-            'nama' => 'required|string',
+            'nama' => 'required|string|unique:pakets,'.$paket->id.'',
             'status' => 'required',
             'harga' => 'required|numeric'
         ]);
@@ -51,5 +53,29 @@ class PaketController extends Controller
         $paket->delete();
 
         return redirect('paket')->with('success','Paket berhasil dihapus');
+    }
+
+    public function getMenu($id){
+        $paket = Paket::find($id);
+        $menu = Menu::whereDoesntHave('paket', function (Builder $query) {
+            $query->where('status', 1);
+        })->get();
+        $idPaket = $id;
+        return view('paket.menu',compact('paket','idPaket','menu'));
+    }
+
+    public function addMenu(Request $request,$id){
+        $paket = Paket::find($id);
+        $paket->menu()->attach($request->menu);
+        // for ($i=0; $i < count($request->menu); $i++) {
+        //     $paket->menu()->attach($request->menu[$i]);
+        // }
+        return redirect('paket/'.$id.'/getMenu')->with('success','Berhasil');
+    }
+
+    public function deleteMenu($id,$id2){
+        $menu = Menu::find($id);
+        $menu->paket()->detach($id2);
+        return redirect('paket/'.$id2.'/getMenu')->with('success','Yeah');
     }
 }

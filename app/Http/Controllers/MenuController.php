@@ -20,7 +20,7 @@ class MenuController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string',
+            'nama' => 'required|string|unique:menus',
             'status' => 'required',
             'harga' => 'required|numeric',
             'kategori' => 'required'
@@ -37,7 +37,7 @@ class MenuController extends Controller
 
     public function update(Request $request, Menu $menu){
         $request->validate([
-            'nama' => 'required|string',
+            'nama' => 'required|string|unique:menus,nama,'.$menu->id.'',
             'status' => 'required',
             'harga' => 'required|numeric',
             'kategori' => 'required'

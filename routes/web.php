@@ -27,11 +27,13 @@ Route::post('/auth',[AuthController::class,'authenticate']);
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['admin','cekshift']], function () {
-
+        Route::get('/report',[App\Http\Controllers\TrxController::class,'report']);
         Route::resource('menu',MenuController::class);
         Route::resource('paket',PaketController::class);
+        Route::get('/paket/{id}/getMenu',[PaketController::class,'getMenu']);
+        Route::post('/paket/{id}/addMenu',[PaketController::class,'addMenu']);
+        Route::delete('/paket/{id}/{id2}/deleteMenu', [PaketController::class,'deleteMenu']);
         Route::resource('meja', App\Http\Controllers\MejaController::class);
-        Route::resource('menupaket',App\Http\Controllers\MenuPaketController::class);
         Route::resource('posts', UserController::class);
 
     });

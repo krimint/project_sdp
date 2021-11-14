@@ -7,8 +7,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p class="card-title">Paket</p>
-                        <a class="btn btn-success float-right" href="/paket/create">Add</a>
+                        <p class="card-title">Menu Paket</p>
                     </div>
                     <div class="card-body">
                         @if(session()->has('success'))
@@ -18,21 +17,43 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                        @endif
-                        <table class="table table-bordered" id="paket-table">
+                        @endif  
+                        <form action="/paket/{{ $idPaket }}/addMenu" method="post" class="col-md-6">
+                            @csrf
+                            <button type="submit" class="btn btn-primary mb-3">Simpan</button>
+                            <table class="table table-borderless" id="menu-table">
+                                <tr>
+                                    <th>Menu</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" name="menu" required>
+                                            @foreach($menu as $value)
+                                            <option value="{{ $value->id }}">{{ $value->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                   
+                                <td>
+                                </tr>
+                            </table>
+                        </form>
+
+                        <table class="table table-bordered" id="menupaket-table">
                             <thead>
                                 <th>No</th>
                                 <th>Nama</th>
+                                <th>Kategori</th>
                                 <th>Harga</th>
                                 <th>Status</th>
-                                <th>Menu</th>
                                 <th>Aksi</th>
                             </thead>
                             <tbody>
-                                @foreach ($pakets as $value)
+                                @foreach ($paket->menu as $value)
                                 <tr>
                                     <td>{{  $value->id }}</td>
                                     <td>{{  $value->nama }}</td>
+                                    <td>{{  $value->kategori }}</td>
                                     <td>{{  $value->harga }}</td>
                                     <td>
                                         @if($value->status == 0)
@@ -41,12 +62,9 @@
                                             <p>Tersedia</p>    
                                         @endif 
                                     </td>
+                                    
                                     <td>
-                                        <a href="/paket/{{ $value->id }}/getMenu" class="btn btn-sm btn-info">List Menu</a>
-                                    </td>
-                                    <td>
-                                        <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('paket.destroy', $value->id) }}" method="POST">
-                                            <a href="{{ route('paket.edit', $value->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                        <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="/paket/{{ $value->id }}/{{ $idPaket }}/deleteMenu" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
@@ -68,7 +86,7 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function() {
-            var table = $('#paket-table').DataTable({
+            var table = $('#menupaket-table').DataTable({
                 processing:true
             });    
         });
