@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -23,15 +24,23 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users',
             'password' => 'required',
             'jenis_kelamin' => 'required',
             'tanggal_lahir' => 'required',
             'role' => 'required',
-            'active' => 'required',
+            'active' => 'required'
         ]);
 
-        User::create($request->all());
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'role' => $request->role,
+            'active' => $request->active
+        ]);
 
         return redirect()->route('posts.index')
                         ->with('success','Pegawai Created Successfully.');
@@ -50,7 +59,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users,email,'.$post->id.'',
             'jenis_kelamin' => 'required',
             'tanggal_lahir' => 'required',
             'role' => 'required',
