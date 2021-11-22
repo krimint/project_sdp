@@ -54,6 +54,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="/bestSelling" class="nav-link">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Menu Best Selling</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('menu.index') }}" class="nav-link">
                             <i class="nav-icon fas fa-clipboard-list"></i>
                             <p>Menu</p>

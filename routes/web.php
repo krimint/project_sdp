@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/paket/{id}/{id2}/deleteMenu', [PaketController::class,'deleteMenu']);
         Route::resource('meja', App\Http\Controllers\MejaController::class);
         Route::resource('posts', UserController::class);
-
+        Route::get('/bestSelling',[App\Http\Controllers\TrxController::class,'bestSelling']);
     });
 
     //buat shift

@@ -89,6 +89,16 @@ class TrxController extends Controller
         return view('trx.report',compact('report'));
     }
 
+    public function bestSelling(){
+        $best = DetailTrx::select('id_jenis')
+        ->selectRaw('sum(qty) as jumlah')
+        ->where('jenis','Single')->groupBy('id_jenis')->orderBy('jumlah','desc')->get();
+        foreach($best as $key => $value){
+            $best[$key]['nama_jenis'] = Menu::where('id',$value->id_jenis)->first()->nama;
+        }
+        return view('trx.best',compact('best'));
+    }
+
     public function checkout(Request $request,$id){
         Trx::where('id',$id)->update(['status' =>1]);
         Meja::where('id',$request->meja)->update(['status' =>1]);
