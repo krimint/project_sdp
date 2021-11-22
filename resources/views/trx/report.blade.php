@@ -21,18 +21,19 @@
                         <table class="table table-bordered" id="report-table">
                             <thead>
                                 <th>No</th>
-                                <!-- <th>Meja</th> -->
                                 <th>Pesanan</th>
                                 <th>Qty</th>
-                                <!-- <th>Status Pembayaran</th>
-                                <th>Jenis Pembayaran</th> -->
+                                <th>Jenis Pembayaran</th>
+                                <th>Tanggal</th>
                             </thead>
                             <tbody>
                                 @foreach ($report as $value)
                                 <tr>
-                                    <td>{{  $value->id }}</td>
-                                    <td>{{  $value->jenis }}</td>
+                                    <td>{{  $loop->iteration }}</td>
+                                    <td>{{  $value->nama_jenis }}</td>
                                     <td>{{  $value->qty }}</td>
+                                    <td>{{ $value->jenis_payment }}</td>
+                                    <td>{{ $value->created_at }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

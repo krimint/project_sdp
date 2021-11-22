@@ -45,7 +45,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/trx',[App\Http\Controllers\TrxController::class,'index'])->middleware('cekshift');
     Route::get('/getPaket',[App\Http\Controllers\TrxController::class,'getPaket'])->middleware('cekshift');
+    Route::get('/hargaMenu', [App\Http\Controllers\TrxController::class,'hargaMenu'])->middleware('cekshift');
+    Route::get('/hargaPaket',[App\Http\Controllers\TrxController::class,'hargaPaket'])->middleware('cekshift');
     Route::post('/trx/store',[App\Http\Controllers\TrxController::class,'store'])->middleware('cekshift');
+    Route::post('/trx/{id}/checkout',[App\Http\Controllers\TrxController::class,'checkout'])->name('checkout')->middleware('cekshift');
+
+
 
     Route::post('/storeakhir',[App\Http\Controllers\ShiftController::class,'update'])->middleware('cekshift');
     Route::get('/logout',[AuthController::class,'logout'])->middleware('cekshift');

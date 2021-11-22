@@ -48,9 +48,9 @@
                     </li>
                     @if(Auth::user()->role == 'Admin')
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="/report" class="nav-link">
                             <i class="nav-icon fas fa-clipboard-list"></i>
-                            <p>Order</p>
+                            <p>Report</p>
                         </a>
                     </li>
                     <li class="nav-item">
