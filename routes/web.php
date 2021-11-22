@@ -49,6 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/hargaPaket',[App\Http\Controllers\TrxController::class,'hargaPaket'])->middleware('cekshift');
     Route::post('/trx/store',[App\Http\Controllers\TrxController::class,'store'])->middleware('cekshift');
     Route::post('/trx/{id}/checkout',[App\Http\Controllers\TrxController::class,'checkout'])->name('checkout')->middleware('cekshift');
+    Route::get('/trx/{id}/splitBill',[App\Http\Controllers\TrxController::class,'splitBill'])->name('splitBill')->middleware('cekshift');
+    Route::put('/splitSelected',[App\Http\Controllers\TrxController::class,'splitSelected'])->middleware('cekshift');
 
 
 

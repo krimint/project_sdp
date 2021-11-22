@@ -107,4 +107,27 @@ class TrxController extends Controller
             'success' => true
         ]);
     }
+    public function splitBill($id = 0){
+        $transaksi = Trx::with('detailTrx')->find($id)->detailTrx->where('status_payment',0);
+         foreach($transaksi as $key => $value){
+             if($value->jenis == 'Single'){
+                 $transaksi[$key]['nama_jenis'] = Menu::where('id', $value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Menu::where('id', $value->id_jenis)->first()->harga;
+             }else{
+                 $transaksi[$key]['nama_jenis'] = Paket::where('id', $value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Paket::where('id', $value->id_jenis)->first()->harga;
+             }
+
+         }
+
+         return view('trx.split',compact('transaksi'));
+     }
+
+     public function splitSelected(Request $request)
+     {
+         $ids = $request->ids;
+         DetailTrx::whereIn('id',explode(",",$ids))->update(['status_payment' => 1]);
+         return response()->json(['success'=>"berhasil."]);
+     }
+
 }

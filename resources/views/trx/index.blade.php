@@ -103,7 +103,7 @@
                                         <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td>
                                         <td>
                                             <a onclick="checkout({{$value->id}})" id="{{$value->id}}" data-meja="{{$value->meja_id}}" data-total="{{$value->total_payment}}" class="btn btn-primary btn-sm">Checkout</a>
-                                            <a href="#" class="btn btn-info btn-sm">Split Bill</a>
+                                            <a href="{{ route('splitBill',$value->id) }}" class="btn btn-info btn-sm">Split Bill</a>
                                          </td>
                                     </tr>
                                     @endforeach
