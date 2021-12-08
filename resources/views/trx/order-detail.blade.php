@@ -7,7 +7,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p class="card-title">Report</p>
+                        <p class="card-title">Order Detail
+                        
+                        @foreach ($meja as $key => $item)
+                            <span class="font-weight-bold">{{ $item->nama }}</span>
+                        @endforeach</p>
                     </div>
                     <div class="card-body">
                         @if(session()->has('success'))
@@ -21,44 +25,38 @@
                         <table class="table table-bordered" id="report-table">
                             <thead>
                                 <th>No</th>
+                                <th>Pesanan</th>
+                                <th>Qty</th>
+                                <th>Jenis Pembayaran</th>
                                 <th>Tanggal</th>
-                                <th>Status Pembayaran</th>
-                                <th>Total Pembayaran</th>
                             </thead>
                             <tbody>
-                                @foreach ($report as $value)
+                                @foreach ($transaksi as $value)
                                 <tr>
                                     <td>{{  $loop->iteration }}</td>
-                                    <td>{{  $value->created_at->format('d M Y H:i') }}</td>
-                                    <td>
-                                        @if ($value->status == 1)
-                                            Terbayar
-                                            @else
-                                            Belum terbayar
-                                        @endif
-
-                                    </td>
-                                    <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td>
-                                    <td> <a href="/trx/{{ $value->id }}/menu" class="btn btn-warning btn-sm">Detail</a></td>
+                                    <td>{{  $value->nama_jenis }}</td>
+                                    <td>{{  $value->qty }}</td>
+                                    <td>{{ $value->jenis_payment }}</td> 
+                                    <td>{{ $value->created_at->format('D d M Y H:i') }} WIB</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+            </div>        
         </div>
     </section>
     <!-- /.content -->
 
-@endsection
+@endsection 
 
 @section('script')
     <script type="text/javascript">
         $(document).ready(function() {
             var table = $('#report-table').DataTable({
                 processing:true
-            });
+            });    
         });
     </script>
 @endsection
