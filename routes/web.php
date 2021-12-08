@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['admin','cekshift']], function () {
         Route::get('/report',[App\Http\Controllers\TrxController::class,'report']);
+        Route::get('/payment-report',[App\Http\Controllers\TrxController::class,'paymentReport']);
         Route::resource('menu',MenuController::class);
         Route::resource('paket',PaketController::class);
         Route::get('/paket/{id}/getMenu',[PaketController::class,'getMenu']);

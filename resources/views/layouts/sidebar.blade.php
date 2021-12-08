@@ -54,6 +54,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="/payment-report" class="nav-link">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Payment Report</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/bestSelling" class="nav-link">
                             <i class="nav-icon fas fa-clipboard-list"></i>
                             <p>Menu Best Selling</p>

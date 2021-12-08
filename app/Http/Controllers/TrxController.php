@@ -130,4 +130,20 @@ class TrxController extends Controller
          return response()->json(['success'=>"berhasil."]);
      }
 
+     public function paymentReport(){
+        $report = DetailTrx::latest()->get();
+        foreach($report as $key => $value){
+            if($value->jenis == 'Single'){
+                $report[$key]['nama'] = Menu::where('id',$value->id_jenis)->first()->nama;
+                $report[$key]['harga'] = Menu::where('id',$value->id_jenis)->first()->harga;
+            }else{
+                $report[$key]['nama'] = Paket::where('id',$value->id_jenis)->first()->nama;
+                $report[$key]['harga'] = Paket::where('id',$value->id_jenis)->first()->harga;
+            }
+
+        }
+        // return $report;
+        return view('trx.payment-report',compact('report'));
+    }
+
 }
