@@ -63,6 +63,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/trx/{id}/splitBill',[App\Http\Controllers\TrxController::class,'splitBill'])
     ->name('splitBill')->middleware('cekshift');
 
+    Route::get('/trx/{id}/pindahMeja',[App\Http\Controllers\TrxController::class,'pindahMeja'])
+    ->name('pindahMeja')->middleware('cekshift');
+
     Route::delete('/trx/{id}/cancel',[App\Http\Controllers\TrxController::class,'cancel'])
     ->name('cancel')->middleware('cekshift');
 

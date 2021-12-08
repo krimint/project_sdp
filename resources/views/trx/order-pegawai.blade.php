@@ -117,7 +117,8 @@
 
                                                 <a onclick="checkout({{ $value->id }})" id="{{$value->id}}" data-total="{{$menuPrice}}" class="btn btn-primary btn-sm">Checkout</a>
                                                 <a href="{{ route('splitBill',$value->id) }}" class="btn btn-info btn-sm">Split Bill</a>
-                                            @endif
+                                                <a href="{{ route('pindahMeja',$value->id) }}" class="btn btn-warning btn-sm">Pindah Meja</a>
+                                                @endif
                                         </form>
                                         </td>
                                         <td>

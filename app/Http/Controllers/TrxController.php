@@ -218,6 +218,21 @@ class TrxController extends Controller
          return view('trx.split',compact('transaksi'));
      }
 
+     public function pindahMeja($id = 0){
+        $cek = Trx::where('user_id',auth()->user()->id)->whereDate('created_at',date('Y-m-d'))->where('total_payment',0)
+        ->latest()->first();
+        if(!empty($cek)){
+            return redirect('trx/create');
+        }
+
+        $trx = Trx::find($id);
+        $idMeja =  unserialize($trx->meja_id);
+        $meja = Meja::where('status',1)->orWhere(function($query) use($idMeja) {
+                $query->whereIn('id',$idMeja);
+            })->oldest()->get();
+        return view('trx.choose-table',compact('meja'));
+    }
+
      public function cancel($id = 0){
         $trx = Trx::find($id);
         Meja::whereIn('id',unserialize($trx->meja_id))->update(['status' => 1]);
