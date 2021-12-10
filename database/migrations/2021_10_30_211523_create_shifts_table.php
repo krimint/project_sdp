@@ -16,8 +16,8 @@ class CreateShiftsTable extends Migration
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('waktu_awal');
-            $table->timestamp('waktu_akhir')->nullable();
+            $table->dateTime('waktu_awal');
+            $table->dateTime('waktu_akhir')->nullable();
             $table->integer('cash_awal');
             $table->integer('cash_akhir')->nullable();
             $table->timestamps();

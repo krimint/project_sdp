@@ -7,7 +7,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p class="card-title">Report</p>
+                        <p class="card-title">Payment Report</p>
                     </div>
                     <div class="card-body">
                         @if(session()->has('success'))
@@ -18,28 +18,28 @@
                                 </button>
                             </div>
                         @endif
+                        <?php
+                            $method = [];
+                            foreach($report as $key => $value){
+                                $method[$value->jenis_payment][] = $value->qty*$value->harga;
+                            }
+                        ?>
+
                         <table class="table table-bordered" id="report-table">
                             <thead>
                                 <th>No</th>
-                                <th>Tanggal</th>
-                                <th>Status Pembayaran</th>
-                                <th>Total Pembayaran</th>
+                                <th>Jenis Pembayaran</th>
+                                <th>Total Pendapatan</th>
                             </thead>
                             <tbody>
-                                @foreach ($report as $value)
+                                @php
+                                    // dd($method);
+                                @endphp
+                                @foreach ($method as $key2 => $val)
                                 <tr>
-                                    <td>{{  $loop->iteration }}</td>
-                                    <td>{{  $value->created_at->format('d M Y H:i') }}</td>
-                                    <td>
-                                        @if ($value->status == 1)
-                                            Terbayar
-                                            @else
-                                            Belum terbayar
-                                        @endif
-
-                                    </td>
-                                    <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td>
-                                    <td> <a href="/trx/{{ $value->id }}/menu" class="btn btn-warning btn-sm">Detail</a></td>
+                                     <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $key2 }}</td>
+                                    <td>{{ 'Rp '.number_format(array_sum($val),0,',','.') }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

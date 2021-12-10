@@ -26,7 +26,7 @@ class PaketController extends Controller
             'status' => 'required',
             'harga' => 'required|numeric'
         ]);
-        
+
         Paket::create($request->all());
         return redirect('paket')->with('success', 'Paket berhasil ditambahkan');
     }
@@ -45,7 +45,7 @@ class PaketController extends Controller
 
         $paket->update($request->all());
         return redirect()->route('paket.index')->with('success','Paket berhasil diupdate!');
-       
+
     }
 
     public function destroy(Paket $paket)
@@ -57,9 +57,11 @@ class PaketController extends Controller
 
     public function getMenu($id){
         $paket = Paket::find($id);
-        $menu = Menu::whereDoesntHave('paket', function (Builder $query) {
-            $query->where('status', 1);
-        })->get();
+        $menu = Menu::where('status', 1)->get();
+        // kalau mau balik lagi pakai yang jika menu udh ada di paket lain gabisa di select
+        // $menu = Menu::whereDoesntHave('paket', function (Builder $query) {
+        //     $query->where('status', 1);
+        // })->get();
         $idPaket = $id;
         return view('paket.menu',compact('paket','idPaket','menu'));
     }

@@ -25,22 +25,26 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users',
-            'password' => 'required',
+            'image' => 'image|required|max:10240',
+            'password' => 'required|string|min:4',
             'jenis_kelamin' => 'required',
             'tanggal_lahir' => 'required',
             'role' => 'required',
             'active' => 'required'
         ]);
+        $input = $request->except('image');
+        $input['password'] = Hash::make($input['password']);
+        $create = User::create($input);
+        if ($create) {
+            $path = 'image/pengguna';
+            $namafile = $create->email.".jpg";
+            $request->file('image')->storeAs($path,$namafile,'public');
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'role' => $request->role,
-            'active' => $request->active
-        ]);
+            // $fileName = date('YmdH:i:s').'.'.$image->getClientOriginalExtension();
+            // $image->move($path, $fileName);
+            // $input['image'] = $fileName;
+        }
+
 
         return redirect()->route('posts.index')
                         ->with('success','Pegawai Created Successfully.');
@@ -57,16 +61,20 @@ class UserController extends Controller
 
     public function update(Request $request, User $post)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users,email,'.$post->id.'',
+            'image' => 'image|required|max:10240',
+            'password' => 'nullable|string|min:4',
             'jenis_kelamin' => 'required',
             'tanggal_lahir' => 'required',
             'role' => 'required',
             'active' => 'required',
         ]);
+        $input = $validated;
+        $input['password'] = Hash::make($input['password']);
 
-        $post->update($request->all());
+        $post->update($input);
 
         return redirect()->route('posts.index')
                         ->with('success','Pegawai Updated Successfully');

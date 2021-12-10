@@ -19,39 +19,42 @@
                                 </button>
                             </div>
                         @endif
-                        <table class="table table-bordered" id="paket-table">
-                            <thead>
-                                <th width="20px" class="text-center">No</th>
-                                <th width="280px"class="text-center">Nama</th>
-                                <th width="280px"class="text-center">Email</th>
-                                <th width="170px"class="text-center">Jenis Kelamin</th>
-                                <th width="240px"class="text-center">Tanggal Lahir</th>
-                                <th>Role</th>
-                                <th width="200px"class="text-center">Status</th>
-                                <th width="400px"class="text-center">Action</th>
-                            </thead>
-                            <tbody>
-                               @foreach ($posts as $user)
-                                <tr>
-                                    <td class="text-center">{{ ++$i }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->jenis_kelamin }}</td>
-                                    <td>{{ $user->tanggal_lahir }}</td>
-                                    <td>{{ $user->role }}</td>
-                                    <td>{{ $user->active }}</td>
-                                    <td class="text-center">
-                                        <form action="{{ route('posts.destroy',$user->id) }}" method="POST" class="form-inline">
-                                            <a class="btn btn-primary btn-sm" href="{{ route('posts.edit',$user->id) }}">Edit</a>
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm ml-2" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered" id="paket-table">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Foto</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                @foreach ($posts as $user)
+                                    <tr>
+                                        <td class="text-center">{{ ++$i }}</td>
+                                        {{-- <td><img src="/image/{{ $user->image }}" width="50px" height="50px"></td> --}}
+                                        <td><img src="{{ asset("storage/image/pengguna/$user->email") }}.jpg" style="width: 50px;height: 50px;" alt="Tidak ada foto"></td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $user->jenis_kelamin }}</td>
+                                        <td>{{ $user->role }}</td>
+                                        <td>{{ $user->active }}</td>
+                                        <td class="text-center">
+                                            <form action="{{ route('posts.destroy',$user->id) }}" method="POST" class="form-inline">
+                                                <a class="btn btn-primary btn-sm" href="{{ route('posts.edit',$user->id) }}">Edit</a>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm ml-2" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

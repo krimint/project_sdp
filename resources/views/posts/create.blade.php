@@ -20,7 +20,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form action="/posts" method="POST">
+                        <form action="/posts" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-row">
                             <div class="form-group col-md-4">
@@ -61,6 +61,13 @@
                                     <option value="0">Tidak Aktif</option>
                                     <option value="1">Aktif</option>
                                 </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Foto</label>
+                                    <input type="file" name="image" class="form-control">
+                                </div>
+
                             </div>
                         </div>
 

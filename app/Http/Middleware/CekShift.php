@@ -18,11 +18,11 @@ class CekShift
     public function handle(Request $request, Closure $next)
     {
 
-        $cek = Shift::latest()->where('user_id',auth()->user()->id)
-                    ->whereDate('waktu_awal',date('Y-m-d'))
+        $cek = Shift::where('user_id',auth()->user()->id)
+                    ->latest()
                     ->first();
         if($request->getRequestUri() != '/cashawal' && \Auth::user()->role == 'User'){
-            if(is_null($cek)){
+            if(!$cek || session()->get('shift') == 'N'){
                 return redirect()->intended('cashawal');
             }
         }

@@ -16,9 +16,9 @@ class CreateTrxesTable extends Migration
         Schema::create('trxes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('meja_id')->constrained('mejas')->onDelete('cascade');
-            $table->boolean('status');
-            $table->integer('total_payment');
+            $table->string('meja_id',100);
+            $table->boolean('status')->nullable()->default(0);
+            $table->integer('total_payment')->nullable()->default(0);
             $table->timestamps();
         });
     }

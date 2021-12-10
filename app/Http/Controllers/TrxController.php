@@ -22,6 +22,77 @@ class TrxController extends Controller
         }
         $meja = Meja::where('status',1)->oldest()->get();
         return view('trx.choose-table',compact('meja'));
+<<<<<<< HEAD
+=======
+    }
+
+    public function chooseTable(Request $request){
+        $idMeja = serialize($request->idMeja);
+        $idTrx = $request->trx_id;
+        if($idTrx > 0){
+            $trx = Trx::find($idTrx);
+            $oldMeja =  $trx->meja_id;
+
+            $upMeja = Meja::whereIn('id',unserialize($oldMeja))->update(['status' => 1]);
+            if($upMeja){
+                $trx->update(['meja_id' => $idMeja]);
+                Meja::whereIn('id',unserialize($idMeja))->update(['status' => 0]);
+            }
+
+            return response()->json([
+                'success' => 'Berhasil'
+            ]);
+        }
+        else{
+            Trx::create([
+                'user_id' => auth()->user()->id,
+                'meja_id' => $idMeja
+            ]);
+
+            for($i = 0; $i < count($request->idMeja); $i++){
+                Meja::where('id',$request->idMeja[$i])->update(['status' => 0]);
+            }
+
+            return response()->json([
+                'success' => 'Berhasil'
+            ]);
+        }
+
+
+    }
+
+    public function create(){
+        $cek = Trx::where('user_id',auth()->user()->id)->whereDate('created_at',date('Y-m-d'))->where('status',0)
+        ->latest()->first();
+        if(Request()->getRequestUri('trx/create') && is_null($cek)){
+            return redirect('trx');
+        }
+
+        $trx = Trx::where('user_id',auth()->user()->id)->whereDate('created_at',date('Y-m-d'))->where('status',0)
+        ->latest()->first()->id;
+
+        $menu = Menu::where('status','1')->get();
+        return view('trx.index',compact(['menu','trx']));
+    }
+
+    public function invoice($id = 0){
+        $trx = Trx::find($id);
+        $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
+        $date = $trx->created_at;
+        $listMenuInv = DetailTrx::where('trx_id',$trx->id)->where('status_payment',1)->pluck('id');
+        $transaksi = $trx->detailTrx->whereIn('id',collect($listMenuInv));
+        foreach($transaksi as $key => $value){
+            if($value->jenis == 'Single'){
+                $transaksi[$key]['nama_jenis'] = Menu::where('id',$value->id_jenis)->first()->nama;
+                $transaksi[$key]['harga'] = Menu::where('id',$value->id_jenis)->first()->harga;
+            }else{
+                $transaksi[$key]['nama_jenis'] = Paket::where('id',$value->id_jenis)->first()->nama;
+                $transaksi[$key]['harga'] = Paket::where('id',$value->id_jenis)->first()->harga;
+            }
+
+        }
+        return view('trx.invoice',compact('transaksi','meja','date'));
+>>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
     }
 
     public function chooseTable(Request $request){
@@ -179,6 +250,7 @@ class TrxController extends Controller
         $report = Trx::latest()->get();
         return view('trx.report',compact('report'));
     }
+<<<<<<< HEAD
 
     public function pegawaiReport(){
         $report = Trx::select('trxes.user_id','users.name',DB::raw('date(trxes.created_at) as created_at'))
@@ -208,8 +280,20 @@ class TrxController extends Controller
                 $report[$key]['nama'] = Paket::where('id',$value->id_jenis)->first()->nama;
                 $report[$key]['harga'] = Paket::where('id',$value->id_jenis)->first()->harga;
             }
+=======
+>>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
 
+    public function orderPegawai(){
+        $transaksi = Trx::where('user_id',auth()->user()->id)
+        ->whereDate('created_at',date('Y-m-d'))
+        ->orderBy('created_at','desc')->with('detailTrx')
+        ->get();
+        // return $transaksi;
+         foreach($transaksi as $key => $row){
+            $idMeja = $row->meja_id;
+            $transaksi[$key]['meja'] = Meja::whereIn('id',unserialize($idMeja))->get();
         }
+<<<<<<< HEAD
         // return $report;
         return view('trx.payment-report',compact('report'));
     }
@@ -224,6 +308,8 @@ class TrxController extends Controller
             $idMeja = $row->meja_id;
             $transaksi[$key]['meja'] = Meja::whereIn('id',unserialize($idMeja))->get();
         }
+=======
+>>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
         foreach($transaksi as $key => $value){
             foreach($value->detailTrx as $k2 => $v2){
                 if($v2->jenis == 'Single'){
@@ -237,6 +323,25 @@ class TrxController extends Controller
         return view('trx.order-pegawai',compact('transaksi'));
     }
 
+    public function listMenu($id = 0){
+        $trx = Trx::find($id);
+        $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
+        $transaksi = Trx::with('detailTrx')->find($id)->detailTrx;
+
+         foreach($transaksi as $key => $value){
+             if($value->jenis == 'Single'){
+                 $transaksi[$key]['nama_jenis'] = Menu::where('id',$value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Menu::where('id',$value->id_jenis)->first()->harga;
+             }else{
+                 $transaksi[$key]['nama_jenis'] = Paket::where('id',$value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Paket::where('id',$value->id_jenis)->first()->harga;
+             }
+
+         }
+
+         return view('trx.order-detail',compact('transaksi','meja'));
+     }
+
     public function bestSelling(){
         $best = DetailTrx::select('id_jenis')
         ->selectRaw('sum(qty) as jumlah')
@@ -247,6 +352,7 @@ class TrxController extends Controller
         return view('trx.best',compact('best'));
     }
 
+<<<<<<< HEAD
     public function listMenu($id = 0){
        $trx = Trx::find($id);
        $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
@@ -300,4 +406,83 @@ class TrxController extends Controller
         $hargaPaket = Paket::where('id',$request->id)->where('status','1')->first();
         return response()->json($hargaPaket);
     }
+=======
+    public function checkout(Request $request,$id){
+        $trx= Trx::where('id',$id);
+        $idMeja = $trx->first()->meja_id;
+
+        if($trx->update(['status' => 1])){
+            Meja::whereIn('id',unserialize($idMeja))->update(['status' => 1]);
+
+            DetailTrx::where('trx_id',$id)->update(['status_payment' =>1,'jenis_payment' => $request->method]);
+
+            return response()->json([
+                'success' => true,
+                'url' => route('invoice',$id)
+            ]);
+        }
+
+    }
+    public function splitBill($id = 0){
+        $transaksi = Trx::with('detailTrx')->find($id)->detailTrx->where('status_payment',0);
+         foreach($transaksi as $key => $value){
+             if($value->jenis == 'Single'){
+                 $transaksi[$key]['nama_jenis'] = Menu::where('id', $value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Menu::where('id', $value->id_jenis)->first()->harga;
+             }else{
+                 $transaksi[$key]['nama_jenis'] = Paket::where('id', $value->id_jenis)->first()->nama;
+                 $transaksi[$key]['harga'] = Paket::where('id', $value->id_jenis)->first()->harga;
+             }
+
+         }
+
+         return view('trx.split',compact('transaksi'));
+     }
+
+     public function pindahMeja($id = 0){
+        $cek = Trx::where('user_id',auth()->user()->id)->whereDate('created_at',date('Y-m-d'))->where('total_payment',0)
+        ->latest()->first();
+        if(!empty($cek)){
+            return redirect('trx/create');
+        }
+
+        $trx = Trx::find($id);
+        $idMeja =  unserialize($trx->meja_id);
+        $meja = Meja::where('status',1)->orWhere(function($query) use($idMeja) {
+                $query->whereIn('id',$idMeja);
+            })->oldest()->get();
+        return view('trx.choose-table',compact('meja'));
+    }
+
+     public function cancel($id = 0){
+        $trx = Trx::find($id);
+        Meja::whereIn('id',unserialize($trx->meja_id))->update(['status' => 1]);
+        $trx->delete();
+        return redirect('trx')->with('success','Berhasil cancel pesanan');
+    }
+
+     public function splitSelected(Request $request)
+     {
+         $ids = $request->ids;
+         DetailTrx::whereIn('id',explode(",",$ids))->update(['status_payment' => 1]);
+         return response()->json(['success'=>"berhasil."]);
+     }
+
+     public function paymentReport(){
+        $report = DetailTrx::latest()->get();
+        foreach($report as $key => $value){
+            if($value->jenis == 'Single'){
+                $report[$key]['nama'] = Menu::where('id',$value->id_jenis)->first()->nama;
+                $report[$key]['harga'] = Menu::where('id',$value->id_jenis)->first()->harga;
+            }else{
+                $report[$key]['nama'] = Paket::where('id',$value->id_jenis)->first()->nama;
+                $report[$key]['harga'] = Paket::where('id',$value->id_jenis)->first()->harga;
+            }
+
+        }
+        // return $report;
+        return view('trx.payment-report',compact('report'));
+    }
+
+>>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
 }

@@ -3,11 +3,11 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p class="card-title">Transaksi</p>
+                        <p class="card-title">List Order</p>
                     </div>
                     <div class="card-body">
                         @if(session()->has('success'))
@@ -18,68 +18,52 @@
                                 </button>
                             </div>
                         @endif
-                        @if ($errors->any())
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-                        <form action="/trx/store" method="post">
-                            @csrf
-                            <button type="submit" class="btn btn-primary mb-3">Simpan</button>
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dynamicAddRemove">
-                                    <tr>
-                                        <th>Jenis</th>
-                                        <th>Menu</th>
-                                        <th>Qty</th>
-                                        <th>Harga</th>
-                                        <th>Sub Total</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    <tr>
-                                        <input type="hidden" name="trx_id" value="{{ $trx }}">
-                                        <td>
-                                            <select class="form-control jenis" name="jenis[]" id="jenis_1" onchange="dynamics(1)">
-                                                <option value="Single">Single</option>
-                                                <option value="Paket">Paket</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select class="form-control menu" name="menu[]" id="menu_1" onchange="showHarga(1)"><option disabled selected>Pilih Menu</option>@foreach($menu as $value)<option value="{{ $value->id }}">{{ $value->nama }}</option>@endforeach</select></td>
-                                        </td>
-                                        <td><input type="text" name="qty[]" id="qty_1" onchange="calcSub(1)" class="form-control" placeholder="Qty" readonly></td>
-                                        <td><input type="text" name="harga[]" id="harga_1" class="form-control" placeholder="Harga" readonly></td>
-                                        <td><input type="text" name="sub[]" id="sub_1" class="form-control" placeholder="Sub Total" readonly></td>
-                                    <td><button type="button" name="add" id="add-btn" class="btn btn-sm btn-success">Add</button></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </form>
-                        <!--  -->
+                        <table class="table table-bordered" id="report-table">
+                            <thead>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Total Pendapatan</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($report as $value)
+                                <tr>
+                                    <td>{{  $loop->iteration }}</td>
+                                    <td>{{  $value->created_at->format('d F Y') .' Jam '.$value->created_at->format('H:i')  }}</td>
+                                    <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td>
+                                    <td>
+                                        <a href="/trx/{{ $value->id }}/menu" class="btn btn-dark btn-sm">List Menu</a>
+                                        @if ($value->status == 1)
+                                            <a href="/trx/{{ $value->id }}/invoice" class="btn btn-primary btn-sm">Cetak Invoice</a>
+                                        @endif
+
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        {{-- <div class="row">
-            <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p class="card-title">List Transaksi</p>
+                        <p class="card-title">List Order</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered" id="transaksi-table">
+                            <table class="table table-sm table-bordered" id="transaksi-table">
                                 <thead>
                                     <th>No</th>
                                     <th>Meja</th>
                                     <th>Status</th>
                                     <th>Total Harga</th>
-                                    <th>Action</th>
+                                    <th>Jam</th>
+                                    <th>Action 1</th>
+                                    <th>Action 2</th>
                                 </thead>
                                 <tbody>
 
@@ -98,17 +82,50 @@
                                                 <p>Terbayar</p>
                                             @endif
                                         </td>
-                                        <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td>
                                         <td>
-                                            <form class="d-inline" onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('cancel', $value->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
-                                            @if ($value->total_payment > 0)
-                                                <a onclick="checkout({{$value->id}})" id="{{$value->id}}" data-total="{{$value->total_payment}}" class="btn btn-primary btn-sm">Checkout</a>
+                                            <?php
+                                                $menuPrice = 0;
+                                                $total = 0;
+                                            ?>
+                                            @foreach ($value->detailTrx as $k2 => $v2)
+                                                @php
+                                                    if($value->status == 1){
+                                                        $menuPrice = $value->total_payment;
+                                                    }
+                                                    $total = $value->total_payment;
+                                                    if($v2->status_payment == 0){
+                                                        $menuPrice += ($v2->harga*$v2->qty);
+                                                    }
+                                                    else{
+                                                        if($v2->status_payment == 1){
+                                                            $total = $total-$menuPrice;
+                                                        }
+                                                    }
+                                               @endphp
+
+                                            @endforeach
+                                            {{ 'Rp '.number_format($menuPrice,0,',','.') }}
+                                        </td>
+                                        {{-- <td>{{ 'Rp '.number_format($value->total_payment,0,',','.') }}</td> --}}
+                                        <td>{{ $value->created_at->format('H:i') }}</td>
+                                        <td>
+                                            @if($value->total_payment < 0 || $value->status != 1)
+                                                <form class="d-inline" onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('cancel', $value->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+
+                                                <a onclick="checkout({{ $value->id }})" id="{{$value->id}}" data-total="{{$menuPrice}}" class="btn btn-primary btn-sm">Checkout</a>
                                                 <a href="{{ route('splitBill',$value->id) }}" class="btn btn-info btn-sm">Split Bill</a>
-                                            @endif
+                                                <a href="{{ route('pindahMeja',$value->id) }}" class="btn btn-warning btn-sm">Pindah Meja</a>
+                                                @endif
                                         </form>
+                                        </td>
+                                        <td>
+                                            <a href="/trx/{{ $value->id }}/menu" class="btn btn-dark btn-sm">Menu</a>
+                                            @if ($value->status == 1)
+                                                <a href="/trx/{{ $value->id }}/invoice" class="btn btn-primary btn-sm">Invoice</a>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
@@ -159,110 +176,29 @@
                     </div>
                 </div>
             </div>
-        </div> --}}
+        </div>
     </section>
     <!-- /.content -->
 
 @endsection
 
 @section('script')
-<script type="text/javascript">
-    $(document).ready(function() {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var table = $('#report-table').DataTable({
+                processing:true
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
         var table = $('#transaksi-table').DataTable({
             processing:true
         });
     });
-
-    function dynamics(param = 1){
-        var jenis = document.getElementById('jenis_'+param).value;
-        // alert(jenis);
-            if(jenis === 'Paket') {
-                $.ajax({
-                    url: '/getPaket',
-                    type: "GET",
-                    data : {"_token":"{{ csrf_token() }}"},
-                    dataType: "json",
-                    success:function(data)
-                    {
-                        if(data){
-                            $('#menu_'+param).empty();
-                            $('#menu_'+param).append('<option hidden>Pilih Paket</option>');
-                            $.each(data, function(key, paket){
-                                $('#menu_'+param).append('<option value="'+ paket.id +'">' + paket.nama+ '</option>');
-                            });
-                        }
-                    }
-                });
-            }
-            else{
-                $('#menu_'+param).empty();
-                $('#menu_'+param).append('<option disabled selected>Pilih Menu</option>@foreach($menu as $value)<option value="{{ $value->id }}">{{ $value->nama }}</option>@endforeach');
-            }
-    }
-</script>
-
-<script type="text/javascript">
-    var i = 1;
-    $("#add-btn").click(function(){
-         ++i;
-        $("#dynamicAddRemove").append(
-            '<tr>'+
-            '<td><select class="form-control jenis" name="jenis[]" id="jenis_'+i+'" onchange="dynamics('+i+')">'+
-            '<option value="Single">Single</option><option value="Paket">Paket</option></select></td>'+
-            '<td><select class="form-control menu" name="menu[]" id="menu_'+i+'" onchange="showHarga('+i+')">'+
-            '<option disabled selected>Pilih Menu</option>@foreach($menu as $value)<option value="{{ $value->id }}">{{ $value->nama }}</option>@endforeach</select></td>'+
-            '<td><input type="text" name="qty[]" id="qty_'+i+'" class="form-control" placeholder="Qty" onchange="calcSub('+i+')" readonly></td>'+
-            '<td><input type="text" name="harga[]" id="harga_'+i+'" class="form-control" placeholder="Harga" readonly></td>'+
-            '<td><input type="text" name="sub[]" id="sub_'+i+'" class="form-control" placeholder="Sub Total" readonly></td>'+
-            '<td><button type="button" class="btn btn-danger remove-tr">Remove</button></td></tr>');
-        });
-    $(document).on('click', '.remove-tr', function(){
-        $(this).parents('tr').remove();
-    });
-</script>
-
-<script type="text/javascript">
-
-    function showHarga(param = 1){
-        var menu = document.getElementById('menu_'+param).value;
-        var jenis = document.getElementById('jenis_'+param).value;
-        var url = '';
-        if(jenis === 'Single'){
-            url = '/hargaMenu';
-        }
-        else if(jenis === 'Paket'){
-            url = '/hargaPaket';
-
-        }
-        $.ajax({
-            url: url,
-            type: 'GET',
-            data : {
-                "_token":"{{ csrf_token() }}",
-                "id": menu,
-                },
-            dataType: 'json',
-            success: function(response){
-                if(response != null){
-                    $('#qty_'+param).removeAttr('readonly');
-                    $('#harga_'+param).val(response.harga);
-                }
-            }
-        });
-    }
-
-    function calcSub(row = 1){
-        var menu = document.getElementById('menu_'+row);
-        var qty = document.getElementById('qty_'+row).value;
-        var price = document.getElementById('harga_'+row).value;
-
-            var calculate = parseFloat(qty) * parseFloat(price);
-            document.getElementById('sub_'+row).value = calculate;
-
-    }
-</script>
-
-<script>
+    </script>
+    <script>
     function checkout(id){
         var total = $('#'+id).data('total');
         $('.checkout-title').html("Checkout");
@@ -305,6 +241,7 @@
                     success: (response) => {
                         $('#checkout').modal('hide');
                         $('#checkout-form').trigger("reset");
+                        window.location.href = response.url;
                     },
                 });
             }

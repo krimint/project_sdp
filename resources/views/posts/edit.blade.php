@@ -20,13 +20,17 @@
                                 </ul>
                             </div>
                         @endif
-                        <form action="/posts/{{ $post->id }}" method="POST">
+                        <form action="/posts/{{ $post->id }}" method="POST"  enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label>Nama</label>
                                 <input type="text" name="name" value="{{ $post->name  }}" class="form-control" placeholder="Nama" required>
+                            </div>
+                             <div class="form-group col-md-4">
+                                <label>Password</label>
+                                <input type="password" name="password" class="form-control" placeholder="Password">
                             </div>
                             <div class="form-group col-md-4">
                                 <label>Email</label>
@@ -62,6 +66,13 @@
                                     <option value="1" <?= ($status == '1') ? 'selected' : ''; ?>>Aktif</option>
                                 </select>
                             </div>
+                            {{-- <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label>Foto</label>
+                                    <input type="file" name="image" class="form-control">
+                                </div>
+
+                            </div> --}}
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>
