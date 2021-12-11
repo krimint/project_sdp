@@ -115,16 +115,16 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
 
-                                                <a onclick="checkout({{ $value->id }})" id="{{$value->id}}" data-total="{{$menuPrice}}" class="btn btn-primary btn-sm">Checkout</a>
+                                                <a onclick="checkout({{ $value->id }})" id="{{$value->id}}" data-detail="{{ $value->detailTrx->where('status_payment',0)->pluck('id') }}" data-total="{{$menuPrice}}" class="btn btn-primary btn-sm">Checkout</a>
                                                 <a href="{{ route('splitBill',$value->id) }}" class="btn btn-info btn-sm">Split Bill</a>
                                                 <a href="{{ route('pindahMeja',$value->id) }}" class="btn btn-warning btn-sm">Pindah Meja</a>
-                                                @endif
+                                            @endif
                                         </form>
                                         </td>
                                         <td>
                                             <a href="/trx/{{ $value->id }}/menu" class="btn btn-dark btn-sm">Menu</a>
                                             @if ($value->status == 1)
-                                                <a href="/trx/{{ $value->id }}/invoice" class="btn btn-primary btn-sm">Invoice</a>
+                                                <a href="/trx/{{ $value->id }}/invoice/true" class="btn btn-primary btn-sm">Invoice</a>
                                             @endif
                                         </td>
                                     </tr>
@@ -143,7 +143,8 @@
                                             <form id="checkout-form">
                                                 @csrf
                                                 <div class="form-group">
-                                                    <input type="hidden" name="id" id="id">
+                                                    <input type="hidden" name="trx_id" id="trx_id">
+                                                    <input type="hidden" name="detail_id" id="detail_id">
                                                     <label for="total_payment" class="col-form-label">Total Harga:</label>
                                                     <input type="text" class="form-control" id="total_payment" name="total_payment" required readonly>
                                                 </div>
@@ -156,7 +157,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="total_bayar" class="col-form-label">Total Bayar:</label>
-                                                    <input type="text" class="form-control" id="total_bayar" name="total_bayar" onchange="totalBayar()" required>
+                                                    <input type="text" class="form-control" id="total_bayar" name="total_bayar" required onchange="totalBayar()">
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="kembalian" class="col-form-label">Kembalian:</label>
@@ -201,10 +202,12 @@
     <script>
     function checkout(id){
         var total = $('#'+id).data('total');
+        var detail_id =  $('#'+id).data('detail');
         $('.checkout-title').html("Checkout");
         $('#checkout').modal('show');
         $('#total_payment').val(total);
-        $('#id').val(id);
+        $('#trx_id').val(id);
+        $('#detail_id').val(detail_id);
     }
 
     function totalBayar(){
@@ -220,28 +223,32 @@
    $(document).ready(function(){
         $('#btn-save').click(function(e) {
             e.preventDefault();
-            var id = $('#id').val();
+            var trx_id = $('#trx_id').val();
+            var detail_id = $('#detail_id').val();
             var meja = $('#meja').val();
             var totalP = $('#total_payment').val();
             var method = $('#jenis_payment').val();
             var kembalian = $('#kembalian').val()
-            if(kembalian < 0){
+            if(kembalian == '' || kembalian < 0){
                 alert('Jumlah bayar kurang');
             }
             else{
                 $.ajax({
-                    type:'POST',
-                    url: '/trx/'+id+'/checkout',
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    type: "PUT",
+                    url: "{{ url('checkout') }}",
                     data:{
-                        "_token":"{{ csrf_token() }}",
-                        "id": id,
+                        "trx_id": trx_id,
+                        "detail_id": detail_id,
                         "totalP": totalP,
                         "method": method,
                     },
                     success: (response) => {
+                        if(response['url']){
+                            window.location.href = response.url;
+                        }
                         $('#checkout').modal('hide');
                         $('#checkout-form').trigger("reset");
-                        window.location.href = response.url;
                     },
                 });
             }

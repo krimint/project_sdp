@@ -15,6 +15,9 @@ class TrxController extends Controller
 {
 
     public function index(){
+        if(auth()->user()->role != 'User'){
+            return redirect('dashboard');
+        }
         $cek = Trx::where('user_id',auth()->user()->id)->whereDate('created_at',date('Y-m-d'))->where('total_payment',0)
         ->latest()->first();
         if(!empty($cek)){
@@ -74,9 +77,7 @@ class TrxController extends Controller
     }
 
     public function store(Request $request){
-
         $total_payment = 0;
-
         for ($i=0; $i < count($request->menu); $i++) {
             $total_payment += $request->sub[$i];
         }
@@ -97,20 +98,26 @@ class TrxController extends Controller
 
     }
 
-    public function checkout($id = 0,Request $request){
-        $trx= Trx::where('id',$id);
-        $idMeja = $trx->first()->meja_id;
-
-        if($trx->update(['status' => 1])){
-            Meja::whereIn('id',unserialize($idMeja))->update(['status' => 1]);
-
-            DetailTrx::where('trx_id',$id)->update(['status_payment' =>1,'jenis_payment' => $request->method]);
-
-            return response()->json([
-                'success' => true,
-                'url' => route('invoice',$id)
-            ]);
+    public function checkout(Request $request){
+        $detail_id = $request->detail_id;
+        $trx = DetailTrx::whereIn('id',explode(",",$detail_id))->update(['status_payment' => 1,'jenis_payment' => $request->method]);
+        $getDTStatus = DetailTrx::whereIn('trx_id',[$request->trx_id]);
+        $paidAll = $getDTStatus->sum('status_payment');
+        $count = $getDTStatus->count();
+        $response = [
+            'success'=> 'berhasil',
+            'url' => route('invoice',str_replace(',','-',$detail_id)),
+        ];
+        if($paidAll == $count){
+            $id = $request->trx_id;
+            $trx = Trx::find($id);
+            Meja::whereIn('id',unserialize($trx->meja_id))->update(['status' => 1]);
+            $trx->update(['status' => 1]);
+            $response['url'] = route('invoice',str_replace(',','-',$detail_id));
+            $response['paidAll'] = true;
         }
+        // return response()->json(['trx' => $trx]);
+        return response()->json($response);
 
     }
 
@@ -154,21 +161,19 @@ class TrxController extends Controller
     public function splitSelected(Request $request)
     {
         $ids = $request->ids;
-        $trx = DetailTrx::whereIn('id',explode(",",$ids))
-        ->update(['status_payment' => 1,'jenis_payment' => $request->method]);
-
+        $trx = DetailTrx::whereIn('id',explode(",",$ids))->update(['status_payment' => 1,'jenis_payment' => $request->method]);
         $getDTStatus = DetailTrx::whereIn('trx_id',[$request->trx_id]);
         $paidAll = $getDTStatus->sum('status_payment');
         $count = $getDTStatus->count();
         $response = [
             'success'=> 'berhasil',
-            'url' => route('invoice',$request->trx_id),
+            'url' => route('invoice',str_replace(',','-',$ids)),
         ];
         if($paidAll == $count){
             $trx = Trx::find($request->trx_id);
             Meja::whereIn('id',unserialize($trx->meja_id))->update(['status' => 1]);
             $trx->update(['status' => 1]);
-            // $response['url'] = route('invoice',$request->trx_id);
+            $response['url'] = route('invoice',str_replace(',','-',$ids));
             $response['paidAll'] = true;
         }
 
@@ -266,12 +271,26 @@ class TrxController extends Controller
         return view('trx.order-detail',compact('transaksi','meja'));
     }
 
-    public function invoice($id = 0){
-        $trx = Trx::find($id);
-        $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
-        $date = $trx->created_at;
-        $listMenuInv = DetailTrx::where('trx_id',$trx->id)->where('status_payment',1)->pluck('id');
-        $transaksi = $trx->detailTrx->whereIn('id',collect($listMenuInv));
+    public function invoice($id = 0,$last = false){
+        if($last){
+            $trx = Trx::find($id);
+            $date = $trx->first()->created_at;
+            $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
+            $transaksi = $trx->detailTrx->where('trx_id',$id)->where('status_payment',1);
+        }
+        else{
+            $idDetail = str_replace('-',',',$id);
+            $detail = DetailTrx::whereIn('id',explode(",",$idDetail));
+            $transaksi = $detail->get();
+
+            $trxId = $detail->first()->trx_id;
+            $trx = Trx::find($trxId);
+            $date = $trx->first()->created_at;
+            $meja = Meja::whereIn('id',unserialize($trx->meja_id))->oldest()->get();
+
+        }
+
+
         foreach($transaksi as $key => $value){
             if($value->jenis == 'Single'){
                 $transaksi[$key]['nama_jenis'] = Menu::where('id',$value->id_jenis)->first()->nama;
@@ -282,6 +301,8 @@ class TrxController extends Controller
             }
 
         }
+
+
         return view('trx.invoice',compact('transaksi','meja','date'));
     }
 
