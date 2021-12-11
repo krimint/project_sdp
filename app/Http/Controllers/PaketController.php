@@ -26,7 +26,7 @@ class PaketController extends Controller
             'status' => 'required',
             'harga' => 'required|numeric'
         ]);
-
+        
         Paket::create($request->all());
         return redirect('paket')->with('success', 'Paket berhasil ditambahkan');
     }
@@ -45,7 +45,7 @@ class PaketController extends Controller
 
         $paket->update($request->all());
         return redirect()->route('paket.index')->with('success','Paket berhasil diupdate!');
-
+       
     }
 
     public function destroy(Paket $paket)
@@ -57,21 +57,17 @@ class PaketController extends Controller
 
     public function getMenu($id){
         $paket = Paket::find($id);
-        $menu = Menu::where('status', 1)->get();
-        // kalau mau balik lagi pakai yang jika menu udh ada di paket lain gabisa di select
-        // $menu = Menu::whereDoesntHave('paket', function (Builder $query) {
-        //     $query->where('status', 1);
-        // })->get();
+        $menuPaket = MenuPaket::whereIn('paket_id',collect($paket->id))->get();
         $idPaket = $id;
+        $menu = Menu::whereNotIn('id',collect($menuPaket->pluck('menu_id')))->where('status',1)->get();
+        // return $paket->menu;
         return view('paket.menu',compact('paket','idPaket','menu'));
     }
 
     public function addMenu(Request $request,$id){
-        $paket = Paket::find($id);
-        $paket->menu()->attach($request->menu);
-        // for ($i=0; $i < count($request->menu); $i++) {
-        //     $paket->menu()->attach($request->menu[$i]);
-        // }
+        $paket = Paket::find($id)->menu();
+        $paket->attach($request->menu,['qty' => $request->qty]);
+       
         return redirect('paket/'.$id.'/getMenu')->with('success','Berhasil');
     }
 
@@ -80,4 +76,5 @@ class PaketController extends Controller
         $menu->paket()->detach($id2);
         return redirect('paket/'.$id2.'/getMenu')->with('success','Yeah');
     }
+
 }

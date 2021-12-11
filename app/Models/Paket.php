@@ -13,6 +13,7 @@ class Paket extends Model
     protected $fillable = ['nama','status','harga'];
 
     public function menu(){
-        return $this->belongsToMany(Menu::class,'menu_paket','paket_id','menu_id');
+        return $this->belongsToMany(Menu::class,'menu_paket')->withPivot('qty');
     }
+
 }

@@ -17,6 +17,7 @@ class CreatePaketMenusTable extends Migration
             $table->id();
             $table->foreignId('paket_id')->constrained('pakets')->onDelete('cascade');
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
+            $table->integer('qty');
             $table->timestamps();
         });
     }

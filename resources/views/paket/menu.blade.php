@@ -33,8 +33,9 @@
                                             @endforeach
                                         </select>
                                     </td>
-                                   
-                                <td>
+                                    <td>
+                                        <input type="number" name="qty" class="form-control" placeholder="ex: 1" required>
+                                    </td>
                                 </tr>
                             </table>
                         </form>
@@ -44,6 +45,7 @@
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>Kategori</th>
+                                <th>Qty</th>
                                 <th>Harga</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -54,6 +56,7 @@
                                     <td>{{  $value->id }}</td>
                                     <td>{{  $value->nama }}</td>
                                     <td>{{  $value->kategori }}</td>
+                                    <td>{{  $value->pivot->qty }}</td>
                                     <td>{{  $value->harga }}</td>
                                     <td>
                                         @if($value->status == 0)
