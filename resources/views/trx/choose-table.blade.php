@@ -23,15 +23,9 @@
                         </div>
                     @endforeach
                 </div>
-<<<<<<< HEAD
-            </div>
-        </div>
-    </section>
-=======
             </div> 
         </div>
     </section>        
->>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
 @endsection
 
 @section('script')
@@ -73,11 +67,7 @@
                                 else{
                                     window.location.href = '<?php echo route("trxcreate") ?>';
                                 }
-<<<<<<< HEAD
-
-=======
                                 
->>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
                             }
                         },
                         error: function (data) {
@@ -85,16 +75,8 @@
                         }
                     });
                 }
-<<<<<<< HEAD
-
-            });
-        });
-    </script>
-@endsection
-=======
                 
             });
         });
     </script>
 @endsection
->>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5

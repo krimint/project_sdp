@@ -28,11 +28,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['middleware' => ['admin','cekshift']], function () {
         Route::get('/report',[App\Http\Controllers\TrxController::class,'report']);
-<<<<<<< HEAD
         Route::get('/activity-report',[App\Http\Controllers\TrxController::class,'activityReport']);
         Route::get('/pegawai-report',[App\Http\Controllers\TrxController::class,'pegawaiReport']);
-=======
->>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
         Route::get('/payment-report',[App\Http\Controllers\TrxController::class,'paymentReport']);
         Route::resource('menu',MenuController::class);
         Route::resource('paket',PaketController::class);
@@ -61,10 +58,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/hargaPaket',[App\Http\Controllers\TrxController::class,'hargaPaket'])->middleware('cekshift');
     Route::post('/trx/store',[App\Http\Controllers\TrxController::class,'store'])->middleware('cekshift');
-<<<<<<< HEAD
-=======
 
-    Route::post('/trx/{id}/checkout',[App\Http\Controllers\TrxController::class,'checkout'])
+    Route::put('/checkout',[App\Http\Controllers\TrxController::class,'checkout'])
     ->name('checkout')->middleware('cekshift');
 
     Route::get('/trx/{id}/splitBill',[App\Http\Controllers\TrxController::class,'splitBill'])
@@ -82,30 +77,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/trx/{id}/menu',[App\Http\Controllers\TrxController::class,'listMenu'])
     ->name('listMenu')->middleware('cekshift');
 
-    Route::get('/trx/{id}/invoice',[App\Http\Controllers\TrxController::class,'invoice'])
-    ->name('invoice')->middleware('cekshift');
->>>>>>> 2f1bf87dd07d03a594828cf8fbee33d43df3dcb5
-
-    Route::post('/trx/{id}/checkout',[App\Http\Controllers\TrxController::class,'checkout'])
-    ->name('checkout')->middleware('cekshift');
-
-    Route::get('/trx/{id}/splitBill',[App\Http\Controllers\TrxController::class,'splitBill'])
-    ->name('splitBill')->middleware('cekshift');
-
-    Route::get('/trx/{id}/pindahMeja',[App\Http\Controllers\TrxController::class,'pindahMeja'])
-    ->name('pindahMeja')->middleware('cekshift');
-
-    Route::delete('/trx/{id}/cancel',[App\Http\Controllers\TrxController::class,'cancel'])
-    ->name('cancel')->middleware('cekshift');
-
-    Route::put('/splitSelected',[App\Http\Controllers\TrxController::class,'splitSelected'])
-    ->middleware('cekshift');
-
-    Route::get('/trx/{id}/menu',[App\Http\Controllers\TrxController::class,'listMenu'])
-    ->name('listMenu')->middleware('cekshift');
-
-    Route::get('/trx/{id}/invoice',[App\Http\Controllers\TrxController::class,'invoice'])
-    ->name('invoice')->middleware('cekshift');
+    Route::get('/trx/{id}/invoice/{last?}',[App\Http\Controllers\TrxController::class,'invoice'])
+    ->name('invoice')->middleware('cekshift')->where('id','.*');
 
     Route::get('/logout',[AuthController::class,'logout'])->middleware('cekshift');
 
