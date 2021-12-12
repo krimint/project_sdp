@@ -5,15 +5,16 @@
             <div class="col-md-12 p-3">
                 <div class="card border-0 p-4 p-md-5 rounded">
                     <div class="card-header border-0">
-                        <h1 class="text-center">Invoice #@foreach ($meja as $key => $item)
+                        <h1 class="text-center">Restoran</h1>
+                    </div>
+                    <div class="text-left">
+                        <h5 class="text-center">Invoice #@foreach ($meja as $key => $item)
                             <span class="font-weight-bold">{{ $item->nama }}</span>
-                        @endforeach</h1>
+                        @endforeach</h5>
                     </div>
                     <div class="text-right">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item font-weight-bold">Invoice #@foreach ($meja as $key => $item)
-                            <span class="font-weight-bold">{{ $item->nama }}</span>
-                        @endforeach</li>
+                            <li class="list-group-item font-weight-bold">Sales : {{ Auth::user()->name }}</li>
                             <li class="list-group-item font-weight-bold">{{ $date->format('l, d F Y') }}</li>
                         </ul>
                     </div>
@@ -31,7 +32,7 @@
                                 </thead>
                                 <tbody>
                                     <?php $total = 0; ?>
-                                    @foreach($transaksi as $value) 
+                                    @foreach($transaksi as $value)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $value->nama_jenis }}</td>
@@ -51,7 +52,7 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item font-weight-bold">{{ 'Rp '.number_format($total,0,',','.') }}</li>
                         </ul>
-                    </div>    
+                    </div>
                 </div>
             </div>
         </div>
