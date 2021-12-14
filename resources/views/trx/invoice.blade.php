@@ -14,7 +14,7 @@
                     </div>
                     <div class="text-right">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item font-weight-bold">Sales : {{ Auth::user()->name }}</li>
+                            <li class="list-group-item font-weight-bold">Cashier : {{ Auth::user()->name }}</li>
                             <li class="list-group-item font-weight-bold">{{ $date->format('l, d F Y') }}</li>
                         </ul>
                     </div>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="text-right">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item font-weight-bold">{{ 'Rp '.number_format($total,0,',','.') }}</li>
+                            <li class="list-group-item font-weight-bold">{{ 'Total Pesanan Rp '.number_format($total,0,',','.') }}</li>
                         </ul>
                     </div>
                 </div>

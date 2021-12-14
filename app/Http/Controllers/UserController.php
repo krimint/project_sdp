@@ -64,7 +64,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users,email,'.$post->id.'',
-            'image' => 'image|required|max:10240',
+            // 'image' => 'image|required|max:10240',
             'password' => 'nullable|string|min:4',
             'jenis_kelamin' => 'required',
             'tanggal_lahir' => 'required',
