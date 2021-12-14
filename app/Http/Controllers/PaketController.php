@@ -24,11 +24,22 @@ class PaketController extends Controller
         $request->validate([
             'nama' => 'required|string|unique:pakets',
             'status' => 'required',
-            'harga' => 'required|numeric'
+            'harga' => 'required|numeric',
+            'qty' =>'required|numeric|min:1'
+            
         ]);
+
+        if($request->fails())
+        {
+            return redirect()->back()->withErrors($request);
+        }
+        else
+        {
+            Paket::create($request->all());
+            return redirect('paket')->with('success', 'Paket berhasil ditambahkan');
         
-        Paket::create($request->all());
-        return redirect('paket')->with('success', 'Paket berhasil ditambahkan');
+        }    
+        
     }
 
     public function edit(Paket $paket)
@@ -38,7 +49,7 @@ class PaketController extends Controller
 
     public function update(Request $request, Paket $paket){
         $request->validate([
-            'nama' => 'required|string|unique:pakets,'.$paket->id.'',
+            'nama' => 'required|string|unique:pakets,id,'.$paket->id.'',
             'status' => 'required',
             'harga' => 'required|numeric'
         ]);

@@ -34,7 +34,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" name="qty" class="form-control" placeholder="ex: 1" required>
+                                        <input type="number" name="qty" class="form-control" min="1" placeholder="ex: 1" required>
                                     </td>
                                 </tr>
                             </table>
