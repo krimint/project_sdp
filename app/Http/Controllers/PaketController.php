@@ -25,20 +25,11 @@ class PaketController extends Controller
             'nama' => 'required|string|unique:pakets',
             'status' => 'required',
             'harga' => 'required|numeric',
-            'qty' =>'required|numeric|min:1'
-            
         ]);
 
-        if($request->fails())
-        {
-            return redirect()->back()->withErrors($request);
-        }
-        else
-        {
-            Paket::create($request->all());
-            return redirect('paket')->with('success', 'Paket berhasil ditambahkan');
         
-        }    
+            Paket::create($request->all());
+            return redirect('paket')->with('success', 'Paket berhasil ditambahkan');    
         
     }
 
